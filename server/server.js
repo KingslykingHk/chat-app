@@ -20,11 +20,10 @@ io.on('connection', (socket) => {
   if (userId) userSocketMap[userId] = socket.id
 
   io.emit('getOnlineUsers', Object.keys(userSocketMap))
-  socket.on("disconnect" , (socket)=>{
-    console.log(("User Disconnected: " , userId));
+  socket.on('disconnect', (socket) => {
+    console.log(('User Disconnected: ', userId))
     delete userSocketMap[userId]
-    io.emit("getOnlineUsers", Object.keys(userSocketMap))
-    
+    io.emit('getOnlineUsers', Object.keys(userSocketMap))
   })
 })
 app.use(express.json({ limit: '4mb' }))
@@ -37,6 +36,9 @@ app.use('/api/auth', userRouter)
 app.use('/api/messages', messageRouter)
 
 await connectDb()
-const PORT = process.env.PORT || 5000
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000
 
-server.listen(PORT, () => console.log(`https://localhost:${PORT}`))
+  server.listen(PORT, () => console.log(`https://localhost:${PORT}`))
+}
+export default server
